@@ -3,7 +3,6 @@ runtime: org.freedesktop.Platform
 runtime-version: '25.08'
 sdk: org.freedesktop.Sdk
 command: ply
-
 finish-args:
   - --share=ipc
   - --socket=wayland
@@ -12,194 +11,150 @@ finish-args:
   - --filesystem=xdg-music:ro
   - --talk-name=org.kde.StatusNotifierWatcher
   - --talk-name=com.canonical.AppMenu.Registrar
-
 modules:
-
-  - name: python3-build-tools
-    buildsystem: simple
-    sources:
-      - url: https://files.pythonhosted.org/packages/source/w/wheel/wheel-0.47.0.tar.gz
-        sha256: cc72bd1009ba0cf63922e28f94d9d83b920aa2bb28f798a31d0691b02fa3c9b3
-        type: file
-
-      - url: https://files.pythonhosted.org/packages/source/p/packaging/packaging-26.2.tar.gz
-        sha256: ff452ff5a3e828ce110190feff1178bb1f2ea2281fa2075aadb987c2fb221661
-        type: file
-
-      - url: https://files.pythonhosted.org/packages/source/f/flit-core/flit_core-3.12.0.tar.gz
-        sha256: 18f63100d6f94385c6ed57a72073443e1a71a4acb4339491615d0f16d6ff01b2
-        type: file
-
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=/app flit_core-3.12.0.tar.gz
-      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=/app wheel-0.47.0.tar.gz
-      - pip3 install --no-build-isolation --no-deps --ignore-installed --prefix=/app packaging-26.2.tar.gz
-  
-  - name: python3-markdown-it-py
-    buildsystem: simple
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz
-        sha256: 04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=/app markdown_it_py-4.2.0.tar.gz
-
-  - name: python3-mdurl
-    buildsystem: simple
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz
-        sha256: bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=/app mdurl-0.1.2.tar.gz
-
-  - name: python3-Pygments
-    buildsystem: simple
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/f1/d9/7fb5aa316bc299258e68c73ba3bddbc499654a07f151cba08f6153988714/pathspec-1.1.1-py3-none-any.whl
-        sha256: a00ce642f577bf7f473932318056212bc4f8bfdf53128c78bbd5af0b9b20b189
-      - type: file
-        url: https://files.pythonhosted.org/packages/54/20/4d324d65cc6d9205fabedc306948156824eb9f0ee1633355a8f7ec5c66bf/pluggy-1.6.0-py3-none-any.whl
-        sha256: e920276dd6813095e9377c0bc5566d94c932c33b27a3e3945d8389c374dd4746
-      - type: file
-        url: https://files.pythonhosted.org/packages/7c/a4/81502f486f01db95bc8320646a8a12511f5e556cb63d5e224d91816605c4/trove_classifiers-2026.6.1.19-py3-none-any.whl
-        sha256: ab4c4ec93cc4a4e7815fa759906e05e6bb3f2fbd92ea0f897288c6a43efd15b3
-      - type: file
-        url: https://files.pythonhosted.org/packages/64/e2/2c0af0a52d16be74a4f194564fcdc417521ed863e9b65e4bc9052dacba6f/hatchling-1.31.0-py3-none-any.whl
-        sha256: aac80bec8b6fe35e8480f1c335be8910fa210a0e6f735a139be205dadcacb544
-      - type: file
-        url: https://files.pythonhosted.org/packages/c3/b2/bc9c9196916376152d655522fdcebac55e66de6603a76a02bca1b6414f6c/pygments-2.20.0.tar.gz
-        sha256: 6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=/app pathspec-1.1.1-py3-none-any.whl
-      - pip3 install --no-build-isolation --no-deps --prefix=/app pluggy-1.6.0-py3-none-any.whl
-      - pip3 install --no-build-isolation --no-deps --prefix=/app trove_classifiers-2026.6.1.19-py3-none-any.whl
-      - pip3 install --no-build-isolation --no-deps --prefix=/app hatchling-1.31.0-py3-none-any.whl
-      - pip3 install --no-build-isolation --no-deps --prefix=/app pygments-2.20.0.tar.gz
-
-  - name: python3-rich
-    buildsystem: simple
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/py3/p/poetry-core/poetry_core-2.4.1-py3-none-any.whl
-        sha256: acf06f9537cd2625bdaec926d95d90b557ba15353bc71d27a3a8a441042b5316
-      - type: file
-        url: https://files.pythonhosted.org/packages/py3/p/poetry/poetry-2.4.1-py3-none-any.whl
-        sha256: a91f13279a3c9add0d12c5ca5c7cb173622930a5c8272fee68c751cb5c72f951
-      - type: file
-        url: https://files.pythonhosted.org/packages/c0/8f/0722ca900cc807c13a6a0c696dacf35430f72e0ec571c4275d2371fca3e9/rich-15.0.0.tar.gz
-        sha256: edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=/app poetry_core-2.4.1-py3-none-any.whl
-      - pip3 install --no-build-isolation --no-deps --prefix=/app poetry-2.4.1-py3-none-any.whl
-      - pip3 install --no-build-isolation --prefix=/app rich-15.0.0.tar.gz
-
-  - name: tcl
-    buildsystem: autotools
-    subdir: unix
-    config-opts:
-      - --enable-threads
-      - --enable-shared
-      - --disable-rpath
-    post-install:
-      - chmod 755 /app/lib/libtcl8.6.so
-      - ln -sf libtcl8.6.so /app/lib/libtcl.so
-      - make install-private-headers
-    sources:
-      - type: archive
-        url: https://downloads.sourceforge.net/project/tcl/Tcl/8.6.16/tcl8.6.16-src.tar.gz
-        sha256: 91cb8fa61771c63c262efb553059b7c7ad6757afa5857af6265e4b0bdc2a14a5
-  
-  - name: tk
-    buildsystem: autotools
-    subdir: unix
-    config-opts:
-      - --enable-threads
-      - --enable-shared
-      - --disable-rpath
-    post-install:
-      - chmod 755 /app/lib/libtk8.6.so
-      - ln -sf libtk8.6.so /app/lib/libtk.so
-      - ln -sf /app/bin/wish8.6 /app/bin/wish
-    sources:
-      - type: archive
-        url: https://downloads.sourceforge.net/project/tcl/Tcl/8.6.16/tk8.6.16-src.tar.gz
-        sha256: be9f94d3575d4b3099d84bc3c10de8994df2d7aa405208173c709cc404a7e5fe
-  
-  - name: tkinter
-    buildsystem: simple
-    build-commands:
-      - python3 -m pip install --no-build-isolation --no-deps --prefix=/app .
-    build-options:
-      env:
-        TCL_LIBRARY: /app/lib/tcl8.6
-        TK_LIBRARY: /app/lib/tk8.6
-        CFLAGS: -I/app/include
-        LDFLAGS: -L/app/lib
-        LIBRARY_PATH: /app/lib
-        LD_LIBRARY_PATH: /app/lib
-    sources:
-      - type: dir
-        path: tkinter-standalone-8.6
-  
- 
-  - name: python3-pybind11
-    buildsystem: simple
-    build-commands:
-      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} "pybind11" --no-build-isolation
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/b3/06/c3a23c9a0263b136c519f033a58d4641e73065fefc7754e9667ec206d992/pybind11-3.0.4-py3-none-any.whl
-        sha256: 961720ee652da51d531b7b2451a6bd2bc042b0106e6d9baa48ecb7d58034ce63
-
-  - name: python3-Pillow
-    buildsystem: simple
-    build-commands:
-      - pip3 install --verbose --exists-action=i --no-index --find-links="file://${PWD}" --prefix=${FLATPAK_DEST} "Pillow" --no-build-isolation
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/1c/3d/bb7fca845737cf9d7dbde16ed1843984665ff2e0a518f5db43e77ec540b9/pillow-12.3.0.tar.gz
-        sha256: 3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce
-
-  - name: python3-mutagen
-    buildsystem: simple
-    sources:
-      - type: file
-        url: https://files.pythonhosted.org/packages/source/m/mutagen/mutagen-1.47.0.tar.gz
-        sha256: 719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99
-    build-commands:
-      - pip3 install --no-build-isolation --no-deps --prefix=/app mutagen-1.47.0.tar.gz
-
-  - shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json
- 
-  - name: python3-pygobject
-    buildsystem: simple
-    sources:
-      - type: archive
-        url: https://files.pythonhosted.org/packages/da/61/978c5fbca34f10a90df362502fbb5a005637909e7b5a0e9212349ea9d010/pygobject-3.56.3.tar.gz
-        sha256: 12760e4a0e3d04b6eb95e06f7a27e362c826d567ea613373a92c003b6c70d2d6
-
-    build-commands:
-      - meson setup _build --prefix=/app -Dpycairo=disabled
-      - meson compile -C _build
-      - meson install -C _build
-  
-  - name: ply
-    buildsystem: simple
-    sources:
-      - type: git
-        url: https://github.com/ahmedrapi79123-cyber/PLY-MUSIC-PLAYER.git
-        commit: 613eca7
-      - type: file
-        path: io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.metainfo.xml
-        dest-filename: flathub.metainfo.xml
-    build-commands:
-      - pip3 install --no-build-isolation --prefix=/app .
-      - install -Dm644 flatpak/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.desktop /app/share/applications/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.desktop
-      - install -Dm644 flathub.metainfo.xml /app/share/metainfo/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.metainfo.xml
-      - install -Dm644 assets/music.png /app/share/icons/hicolor/128x128/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png
-      - mkdir -p /app/share/icons/hicolor/256x256/apps /app/share/icons/hicolor/512x512/apps
-      - python3 -c "from PIL import Image; s=Image.open('assets/music.png').convert('RGBA'); s.resize((256,256),Image.Resampling.LANCZOS).save('/app/share/icons/hicolor/256x256/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png'); s.resize((512,512),Image.Resampling.LANCZOS).save('/app/share/icons/hicolor/512x512/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png')"
-      - mkdir -p /app/share/ply/assets
-      - cp -r assets/* /app/share/ply/assets/
+- name: python3-markdown-it-py
+  buildsystem: simple
+  build-commands:
+  - install -d /app/lib/python3.13/site-packages
+  - tar -xf markdown_it_py-4.2.0.tar.gz
+  - cp -a markdown_it_py-4.2.0/markdown_it /app/lib/python3.13/site-packages/
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/06/ff/7841249c247aa650a76b9ee4bbaeae59370dc8bfd2f6c01f3630c35eb134/markdown_it_py-4.2.0.tar.gz
+    sha256: 04a21681d6fbb623de53f6f364d352309d4094dd4194040a10fd51833e418d49
+- name: python3-mdurl
+  buildsystem: simple
+  build-commands:
+  - install -d /app/lib/python3.13/site-packages
+  - tar -xf mdurl-0.1.2.tar.gz
+  - cp -a mdurl-0.1.2/src/mdurl /app/lib/python3.13/site-packages/
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/d6/54/cfe61301667036ec958cb99bd3efefba235e65cdeb9c84d24a8293ba1d90/mdurl-0.1.2.tar.gz
+    sha256: bb413d29f5eea38f31dd4754dd7377d4465116fb207585f97bf925588687c1ba
+- name: python3-Pygments
+  buildsystem: simple
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/source/p/pygments/pygments-2.20.0.tar.gz
+    sha256: 6757cd03768053ff99f3039c1a36d6c0aa0b263438fcab17520b30a303a82b5f
+  build-commands:
+  - install -d /app/lib/python3.13/site-packages
+  - install -d /app/bin
+  - tar -xf pygments-2.20.0.tar.gz
+  - cp -a pygments-2.20.0/pygments /app/lib/python3.13/site-packages/
+  - printf '%s\n' '#!/usr/bin/env python3' 'from pygments.cmdline import main' 'main()'
+    > /app/bin/pygmentize
+  - chmod 755 /app/bin/pygmentize
+- name: python3-rich
+  buildsystem: simple
+  build-commands:
+  - install -d /app/lib/python3.13/site-packages
+  - tar -xf rich-15.0.0.tar.gz
+  - cp -a rich-15.0.0/rich /app/lib/python3.13/site-packages/
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/source/r/rich/rich-15.0.0.tar.gz
+    sha256: edd07a4824c6b40189fb7ac9bc4c52536e9780fbbfbddf6f1e2502c31b068c36
+- name: tcl
+  buildsystem: autotools
+  subdir: unix
+  config-opts:
+  - --enable-threads
+  - --enable-shared
+  - --disable-rpath
+  post-install:
+  - chmod 755 /app/lib/libtcl8.6.so
+  - ln -sf libtcl8.6.so /app/lib/libtcl.so
+  - make install-private-headers
+  sources:
+  - type: archive
+    url: https://downloads.sourceforge.net/project/tcl/Tcl/8.6.16/tcl8.6.16-src.tar.gz
+    sha256: 91cb8fa61771c63c262efb553059b7c7ad6757afa5857af6265e4b0bdc2a14a5
+- name: tk
+  buildsystem: autotools
+  subdir: unix
+  config-opts:
+  - --enable-threads
+  - --enable-shared
+  - --disable-rpath
+  post-install:
+  - chmod 755 /app/lib/libtk8.6.so
+  - ln -sf libtk8.6.so /app/lib/libtk.so
+  - ln -sf /app/bin/wish8.6 /app/bin/wish
+  sources:
+  - type: archive
+    url: https://downloads.sourceforge.net/project/tcl/Tcl/8.6.16/tk8.6.16-src.tar.gz
+    sha256: be9f94d3575d4b3099d84bc3c10de8994df2d7aa405208173c709cc404a7e5fe
+- name: tkinter
+  buildsystem: simple
+  build-commands:
+  - python3 -m pip install --no-build-isolation --no-deps --prefix=/app .
+  build-options:
+    env:
+      TCL_LIBRARY: /app/lib/tcl8.6
+      TK_LIBRARY: /app/lib/tk8.6
+      CFLAGS: -I/app/include
+      LDFLAGS: -L/app/lib
+      LIBRARY_PATH: /app/lib
+      LD_LIBRARY_PATH: /app/lib
+  sources:
+  - type: git
+    url: https://github.com/iwalton3/tkinter-standalone.git
+    commit: 8e78e38ef0cceb44a3a0062e1c314a4ff3f981db
+  - type: patch
+    path: tkinter-standalone-tk8.6.patch
+- name: python3-Pillow
+  buildsystem: simple
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/source/p/pybind11/pybind11-3.0.4.tar.gz
+    sha256: 3286b59c8a774b9ee650169302dd5a4eedc30a8617905a0560dd8ee44775130c
+  - type: file
+    url: https://files.pythonhosted.org/packages/1c/3d/bb7fca845737cf9d7dbde16ed1843984665ff2e0a518f5db43e77ec540b9/pillow-12.3.0.tar.gz
+    sha256: 3b8182a766685eaa002637e28b4ec8d6b18819a0c71f579bf0dbaa5830297cce
+  build-commands:
+  - mkdir -p .build-deps
+  - tar -xf pybind11-3.0.4.tar.gz
+  - cp -a pybind11-3.0.4/pybind11 .build-deps/
+  - cp -a pybind11-3.0.4/include .build-deps/
+  - PYTHONPATH="$PWD/.build-deps${PYTHONPATH:+:$PYTHONPATH}" pip3 install --verbose
+    --exists-action=i --no-index --find-links="file://${PWD}" --prefix=/app Pillow
+    --no-build-isolation
+- name: python3-mutagen
+  buildsystem: simple
+  sources:
+  - type: file
+    url: https://files.pythonhosted.org/packages/source/m/mutagen/mutagen-1.47.0.tar.gz
+    sha256: 719fadef0a978c31b4cf3c956261b3c58b6948b32023078a2117b1de09f0fc99
+  build-commands:
+  - pip3 install --no-build-isolation --no-deps --prefix=/app mutagen-1.47.0.tar.gz
+- shared-modules/libayatana-appindicator/libayatana-appindicator-gtk3.json
+- name: python3-pygobject
+  buildsystem: simple
+  sources:
+  - type: archive
+    url: https://files.pythonhosted.org/packages/da/61/978c5fbca34f10a90df362502fbb5a005637909e7b5a0e9212349ea9d010/pygobject-3.56.3.tar.gz
+    sha256: 12760e4a0e3d04b6eb95e06f7a27e362c826d567ea613373a92c003b6c70d2d6
+  build-commands:
+  - meson setup _build --prefix=/app -Dpycairo=disabled
+  - meson compile -C _build
+  - meson install -C _build
+- name: ply
+  buildsystem: simple
+  sources:
+  - type: git
+    url: https://github.com/ahmedrapi79123-cyber/PLY-MUSIC-PLAYER.git
+    commit: 613eca7
+  build-commands:
+  - pip3 install --no-build-isolation --prefix=/app .
+  - install -Dm644 flatpak/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.desktop
+    /app/share/applications/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.desktop
+  - install -Dm644 flatpak/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.metainfo.xml /app/share/metainfo/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.metainfo.xml
+  - install -Dm644 assets/music.png /app/share/icons/hicolor/128x128/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png
+  - mkdir -p /app/share/icons/hicolor/256x256/apps /app/share/icons/hicolor/512x512/apps
+  - python3 -c "from PIL import Image; s=Image.open('assets/music.png').convert('RGBA');
+    s.resize((256,256),Image.Resampling.LANCZOS).save('/app/share/icons/hicolor/256x256/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png');
+    s.resize((512,512),Image.Resampling.LANCZOS).save('/app/share/icons/hicolor/512x512/apps/io.github.ahmedrapi79123_cyber.PLY-MUSIC-PLAYER.png')"
+  - mkdir -p /app/share/ply/assets
+  - cp -r assets/* /app/share/ply/assets/
