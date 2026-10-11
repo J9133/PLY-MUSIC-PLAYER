@@ -318,18 +318,12 @@ class GUI:
         )
         self.btn_prev.pack(side=tk.LEFT, padx=5)
 
-        self.btn_play = self._create_flat_button(
+        self.btn_play_pause = self._create_flat_button(
             self.media_frame, text="▶", image=self.images.get("play"),
-            command=self._play_song, width=40 if "play" in self.images else 4
+            command=self._toggle_play_pause, width=40 if "play" in self.images else 4
         )
-        self.btn_play.pack(side=tk.LEFT, padx=5)
-
-        self.btn_pause = self._create_flat_button(
-            self.media_frame, text="⏸", image=self.images.get("pause"),
-            command=self._pause_song, width=40 if "pause" in self.images else 4
-        )
-        self.btn_pause.pack(side=tk.LEFT, padx=5)
-
+        self.btn_play_pause.pack(side=tk.LEFT, padx=5)
+        
         self.btn_stop = self._create_flat_button(
             self.media_frame, text="■", image=self.images.get("stop"),
             command=self._stop_song, width=40 if "stop" in self.images else 4
@@ -418,7 +412,13 @@ class GUI:
         """Dynamically applies current theme colors to all active components."""
         theme = self.theme_mgr.get_gui_theme()
         self._setup_styles()
-
+        
+        self._load_logo_image()
+        self._load_control_icons()
+        self._update_theme_images()
+     
+        if not self.playlist.current_song or not self.playlist.current_song.load_cover():
+            self._load_default_cover()     
         # Tkinter Frames Backgrounds
         self.main_container.config(bg=theme["bg"])
         self.sidebar.config(bg=theme["container_bg"])
@@ -458,7 +458,7 @@ class GUI:
         # Update Buttons
         buttons = [
             self.btn_open_file, self.btn_open_dir, self.btn_load_pl, self.btn_save_pl,
-            self.btn_prev, self.btn_play, self.btn_pause, self.btn_stop, self.btn_next
+            self.btn_prev, self.btn_play_pause, self.btn_stop, self.btn_next
         ]
         for btn in buttons:
             btn.config(bg=theme["btn_bg"], fg=theme["btn_fg"])
@@ -483,7 +483,8 @@ class GUI:
 
     def _load_logo_image(self) -> None:
         """Loads and sizes the application logo."""
-        logo_path = ASSETS_DIR / "logo.png"
+        logo_name = "logo.png" if self.theme_mgr.dark_mode else "logo1.png"
+        logo_path = ASSETS_DIR / logo_name
         if logo_path.exists():
             try:
                 img = Image.open(logo_path).resize((32, 32), Image.Resampling.LANCZOS)
@@ -495,7 +496,8 @@ class GUI:
         """Loads all transparent PNG controls icons."""
         icons = ["play", "pause", "stop", "next", "previous"]
         for icon in icons:
-            icon_path = ASSETS_DIR / f"{icon}.png"
+            suffix = "_white" if self.theme_mgr.dark_mode else ""
+            icon_path = ASSETS_DIR / f"{icon}{suffix}.png"
             if icon_path.exists():
                 try:
                     img = Image.open(icon_path).resize((24, 24), Image.Resampling.LANCZOS)
@@ -503,10 +505,27 @@ class GUI:
                 except Exception as e:
                     logger.error("Failed to load icon %s: %s", icon, e)
 
+    def _update_theme_images(self) -> None:
+        """Updates logo and control icons after a theme change."""
+        if hasattr(self, "logo_label") and "logo" in self.images:
+            self.logo_label.config(image=self.images["logo"])
+
+        if hasattr(self, "btn_prev"):
+            self.btn_prev.config(image=self.images.get("previous"))
+        if hasattr(self, "btn_play_pause"):
+            self.btn_play_pause.config(image=self.images.get(
+                "pause" if self.player.state == "playing" else "play"
+            ))
+        if hasattr(self, "btn_stop"):
+            self.btn_stop.config(image=self.images.get("stop"))
+        if hasattr(self, "btn_next"):
+            self.btn_next.config(image=self.images.get("next"))    
+    
     def _load_default_cover(self) -> None:
         """Generates a default disk cover image."""
         theme = self.theme_mgr.get_gui_theme()
-        logo_path = ASSETS_DIR / "logo.png"
+        logo_name = "logo.png" if self.theme_mgr.dark_mode else "logo1.png"
+        logo_path = ASSETS_DIR / logo_name
         
         # Load logo as fallback cover
         if logo_path.exists():
@@ -587,6 +606,7 @@ class GUI:
     def _pause_song(self) -> None:
         """Pauses current song playback."""
         self.player.pause()
+        self._update_play_pause_button()
         if self.mpris:
             self.mpris.update_paused()
 
@@ -595,9 +615,23 @@ class GUI:
         self.player.stop()
         self.seek_slider.set(0)
         self.time_elapsed_label.config(text="00:00")
+        self._update_play_pause_button()
         if self.mpris:
             self.mpris.update_stopped()
-
+    
+    def _update_play_pause_button(self) -> None:
+        """Updates the Play/Pause button according to player state."""
+        if self.player.state == "playing":
+            self.btn_play_pause.config(
+                text="⏸",
+                image=self.images.get("pause")
+            )
+        else:
+            self.btn_play_pause.config(
+                text="▶",
+                image=self.images.get("play")
+            )
+    
     def _next_song(self) -> None:
         """Plays the next song in the queue."""
         next_song = self.playlist.next_song()
@@ -1083,11 +1117,14 @@ class GUI:
 
 
     def _toggle_play_pause(self) -> None:
-        """Toggle play/pause from tray or MPRIS."""
+        """Toggle play/pause from GUI, tray or MPRIS."""
         if self.player.state == "playing":
             self._pause_song()
+    
         elif self.player.state == "paused":
             self.player.resume()
+            self._update_play_pause_button()
+    
             if self.mpris:
                 current = self.playlist.current_song
                 if current:
@@ -1095,6 +1132,7 @@ class GUI:
                         current.title, current.artist, current.album,
                         current.duration, self.player.volume
                     )
+
         elif self.player.state == "stopped":
             self._play_song()
 
