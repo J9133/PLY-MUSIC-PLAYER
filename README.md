@@ -59,7 +59,7 @@ This registers the `ply` command in your PATH.
 
 ### Install from .deb package
 ```bash
-sudo apt install ./ply-player_1.0.0_all.deb
+sudo apt install ./ply-player_1.1.0_all.deb
 ```
 
 ### Install from Flatpak

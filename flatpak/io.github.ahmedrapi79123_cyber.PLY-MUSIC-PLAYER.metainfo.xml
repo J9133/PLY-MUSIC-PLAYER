@@ -58,6 +58,17 @@
   <content_rating type="oars-1.1" />
 
   <releases>
+    <release version="1.1.0" date="2026-10-13">
+      <description>
+        <p>Improved playback controls and theme behavior.</p>
+        <ul>
+          <li>Combined Play and Pause into a single state-aware button.</li>
+          <li>Updated logo and control icons for light and dark themes.</li>
+          <li>Fixed button hover colors in the light theme.</li>
+        </ul>
+      </description>
+    </release>
+
     <release version="1.0.0" date="2026-07-29">
       <description>
         <p>Initial release of PLY Music Player.</p>
@@ -72,7 +83,6 @@
       </description>
     </release>
   </releases>
-
 
   <screenshots>
     <screenshot type="default">

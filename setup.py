@@ -7,7 +7,7 @@ from setuptools import setup
 
 setup(
     name="ply-player",
-    version="1.0.0",
+    version="1.1.0",
     description="A professional, modern command-line and graphical music player.",
     author="Ahmed",
     author_email="developer@ply.org",

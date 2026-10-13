@@ -3,7 +3,7 @@
 set -e
 
 APP_NAME="ply-player"
-VERSION="1.0.0"
+VERSION="1.1.0"
 ARCH="all"
 DEB_FILE="${APP_NAME}_${VERSION}_${ARCH}.deb"
 BUILD_DIR="ply_deb_build"
@@ -27,7 +27,7 @@ mkdir -p "${BUILD_DIR}/usr/share/ply/assets"
 # 3. DEBIAN/control — no pystray (not in apt), uses system libayatana or pystray optionally
 cat > "${BUILD_DIR}/DEBIAN/control" << 'EOF'
 Package: ply-player
-Version: 1.0.0
+Version: 1.1.0
 Section: sound
 Priority: optional
 Architecture: all
