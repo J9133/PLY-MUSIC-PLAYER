@@ -360,23 +360,47 @@ class GUI:
         )
 
         def on_enter(e):
+            current_theme = self.theme_mgr.get_gui_theme()
+
             if btn == self.btn_shuffle and self.playlist.shuffle:
-                btn.config(bg=theme["accent_active"], fg="#ffffff")
+                btn.config(
+                    bg=current_theme["accent_active"],
+                    fg="#ffffff"
+                )
             elif btn == self.btn_repeat and self.playlist.repeat_mode != "off":
-                btn.config(bg=theme["accent_active"], fg="#ffffff")
+                btn.config(
+                    bg=current_theme["accent_active"],
+                    fg="#ffffff"
+                )
             elif self.theme_mgr.dark_mode:
-                btn.config(bg=theme["accent"], fg="#ffffff")
+                btn.config(
+                    bg=current_theme["accent"],
+                    fg="#ffffff"
+                )
             else:
-                btn.config(bg=theme["btn_bg"], fg=theme["btn_fg"])
+                btn.config(
+                    bg=current_theme["btn_bg"],
+                    fg=current_theme["btn_fg"]
+                )
 
         def on_leave(e):
-            # Check toggle state colors if it's shuffle or repeat
+            current_theme = self.theme_mgr.get_gui_theme()
+
             if btn == self.btn_shuffle and self.playlist.shuffle:
-                btn.config(bg=theme["accent_active"], fg="#ffffff")
+                btn.config(
+                    bg=current_theme["accent_active"],
+                    fg="#ffffff"
+                )
             elif btn == self.btn_repeat and self.playlist.repeat_mode != "off":
-                btn.config(bg=theme["accent_active"], fg="#ffffff")
+                btn.config(
+                    bg=current_theme["accent_active"],
+                    fg="#ffffff"
+                )
             else:
-                btn.config(bg=theme["btn_bg"], fg=theme["btn_fg"])
+                btn.config(
+                    bg=current_theme["btn_bg"],
+                    fg=current_theme["btn_fg"]
+                )
 
         btn.bind("<Enter>", on_enter)
         btn.bind("<Leave>", on_leave)
@@ -468,7 +492,12 @@ class GUI:
             self.btn_prev, self.btn_play_pause, self.btn_stop, self.btn_next
         ]
         for btn in buttons:
-            btn.config(bg=theme["btn_bg"], fg=theme["btn_fg"])
+            btn.config(
+                bg=theme["btn_bg"],
+                fg=theme["btn_fg"],
+                activebackground=theme["accent"],
+                activeforeground="#ffffff"
+    )
 
         # Shuffle and Repeat toggled states colors
         shuf_bg = theme["accent_active"] if self.playlist.shuffle else theme["btn_bg"]
