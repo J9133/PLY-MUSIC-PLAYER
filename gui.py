@@ -71,6 +71,7 @@ class GUI:
 
         # State variables
         self.is_dragging_slider = False
+        self._scan_in_progress = False
         self.search_var = tk.StringVar()
         self.search_var.trace_add("write", self._filter_playlist)
 
@@ -731,22 +732,34 @@ class GUI:
 
     def _open_folder(self) -> None:
         """Opens a folder dialog and scans it recursively in a background thread."""
+        if self._scan_in_progress:
+            messagebox.showinfo(
+                "PLY Music",
+                "Please wait for the current library scan to finish."
+            )
+            return
         dir_path = filedialog.askdirectory(title="Open Music Folder")
         if dir_path:
             folder = Path(dir_path)
             self.settings.set("last_folder", str(folder))
             
             # Start background folder scanning thread
+            self._scan_in_progress = True
             scan_thread = threading.Thread(target=self._scan_folder_worker, args=(folder,), daemon=True)
             scan_thread.start()
 
     def _scan_folder_worker(self, folder: Path) -> None:
         """Worker thread scanning the folder to avoid freezing Tkinter GUI."""
         self.root.after(0, lambda: self.root.config(cursor="watch"))
-        songs = self.library.scan_directory(folder)
+        try:
+            songs = self.library.scan_directory(folder)
+        except Exception:
+            logger.exception("Failed to scan folder: %s", folder)
+            songs = []
         
         # Load songs to playlist on completion
         def on_complete():
+            self._scan_in_progress = False
             self.root.config(cursor="")
             self.playlist.clear()
             for s in songs:
@@ -925,6 +938,53 @@ class GUI:
         # Schedule next update in 200 ms
         self.root.after(200, self._update_loop)
 
+    def _start_last_session_scan(
+        self, folder: Path, last_song_path: Optional[str]
+    ) -> None:
+        """Starts startup library restoration without blocking the GUI."""
+        if self._scan_in_progress:
+            return
+
+        self._scan_in_progress = True
+        self.root.config(cursor="watch")
+
+        thread = threading.Thread(
+            target=self._restore_last_session_worker,
+            args=(folder, last_song_path),
+            daemon=True,
+        )
+        thread.start()
+
+    def _restore_last_session_worker(
+        self, folder: Path, last_song_path: Optional[str]
+    ) -> None:
+        """Scans the saved folder off the GUI thread, then restores the UI."""
+        try:
+            songs = self.library.scan_directory(folder)
+        except Exception:
+            logger.exception("Failed to restore last music folder: %s", folder)
+            songs = []
+
+        def on_complete() -> None:
+            self._scan_in_progress = False
+            self.root.config(cursor="")
+
+            for song in songs:
+                self.playlist.add_song(song)
+
+            self._render_treeview()
+
+            # Restore the last song without automatically starting playback.
+            if last_song_path and os.path.exists(last_song_path):
+                song_path = Path(last_song_path)
+                for song in self.playlist.songs:
+                    if song.filepath == song_path:
+                        self.playlist.set_current_by_song(song)
+                        self._update_ui_state(song)
+                        break
+
+        self.root.after(0, on_complete)
+
     def _load_last_session(self) -> None:
         """Restores properties (volume, folder, last song) from settings file."""
         vol = self.settings.get("last_volume")
@@ -949,23 +1009,15 @@ class GUI:
         rep_bg = theme["accent_active"] if self.playlist.repeat_mode != "off" else theme["btn_bg"]
         self.btn_repeat.config(bg=rep_bg)
 
-        # Restore folder scan if exists
-        if last_folder and os.path.exists(last_folder):
+        # Start restoring the last folder after the event loop begins.
+        # The scan itself runs in a background thread.
+        if last_folder and os.path.isdir(last_folder):
             folder = Path(last_folder)
-            songs = self.library.scan_directory(folder)
-            for s in songs:
-                self.playlist.add_song(s)
-            self._render_treeview()
-
-            # Restore last playing song
-            if last_song_path and os.path.exists(last_song_path):
-                song_p = Path(last_song_path)
-                for s in self.playlist.songs:
-                    if s.filepath == song_p:
-                        self.playlist.set_current_by_song(s)
-                        # Load details but do not autostart
-                        self._update_ui_state(s)
-                        break
+            self.root.after(
+                0,
+                lambda folder=folder, song_path=last_song_path:
+                    self._start_last_session_scan(folder, song_path)
+            )
 
     # =====================================================================
     # BACKGROUND / TRAY / MPRIS INTEGRATION
