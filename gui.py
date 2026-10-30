@@ -1071,6 +1071,9 @@ class GUI:
                     break
 
             if icon_path.exists():
+                icon_theme = _Gtk.IconTheme.get_default()
+                icon_theme.append_search_path(str(icon_path.parent))
+
                 icon_name = icon_path.stem
 
                 logger.info(
